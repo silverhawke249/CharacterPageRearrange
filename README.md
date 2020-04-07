@@ -1,5 +1,5 @@
 # Character Page Rearrange
-A WoW Classic addon to rearrange the character and inspect frame.
+A WoW Classic add-on that rearranges the character and inspect frame.
 
 ![Preview of addon in action.](https://silverhawke.s-ul.eu/z9tHoYPH)
 
