@@ -10,7 +10,7 @@ local ICON_SIZE = 37/2;
 --CharacterStatsClassic needs this line:
 --CSC_UIFrame.CharacterStatsPanel:SetPoint("TOPLEFT", CharacterModelFrame, "BOTTOMLEFT", -16, 24);
 
-local buttons = {{1, "HeadSlot"},
+local CPR_buttons = {{1, "HeadSlot"},
 				 {2, "NeckSlot"},
 				 {3, "ShoulderSlot"},
 				 {15, "BackSlot"},
@@ -34,20 +34,21 @@ CharacterFrame:HookScript("OnShow", function()
 	end
 end);
 --Resize CharacterFrame when switching into and out of Character tab
-PaperDollFrame:HookScript("OnShow", function()
-	--Resize frame
-	CharacterFrame:SetWidth(CharacterFrame:GetWidth() + 80);
-	for i, button in pairs(buttons) do
-		_G["Character"..button[2]].Text:Show();
-	end
-end);
-PaperDollFrame:HookScript("OnHide", function()
-	--Resize frame
-	CharacterFrame:SetWidth(CharacterFrame:GetWidth() - 80);
-	for i, button in pairs(buttons) do
-		_G["Character"..button[2]].Text:Hide();
-	end
-end);
+local function CharacterPageRearrange_PageHook(frameName)
+	--CharacterFrame:GetWidth() = 384
+    if (frameName == "PaperDollFrame") then
+		CharacterFrame:SetWidth(464);
+		for i, button in pairs(CPR_buttons) do
+			_G["Character"..button[2]].Text:Show();
+		end
+    else
+		CharacterFrame:SetWidth(384);
+		for i, button in pairs(CPR_buttons) do
+			_G["Character"..button[2]].Text:Hide();
+		end
+    end
+end
+hooksecurefunc("ToggleCharacter", CharacterPageRearrange_PageHook);
 
 frame:SetScript("OnEvent",
 	function(self, event, ...)
@@ -66,7 +67,7 @@ frame:SetScript("OnEvent",
 					NotifyInspect("target");
 					InspectFrame:SetWidth(InspectFrame:GetWidth() + 80);
 					CharacterPageRearrange_RepositionObject(CharacterFrame, 80, 0);
-					for i, button in pairs(buttons) do
+					for i, button in pairs(CPR_buttons) do
 						if (_G["Inspect"..button[2]].Text) then
 							_G["Inspect"..button[2]].Text:Show();
 						end
@@ -75,7 +76,7 @@ frame:SetScript("OnEvent",
 				InspectPaperDollFrame:HookScript("OnHide", function()
 					InspectFrame:SetWidth(InspectFrame:GetWidth() - 80);
 					CharacterPageRearrange_RepositionObject(CharacterFrame, -80, 0);
-					for i, button in pairs(buttons) do
+					for i, button in pairs(CPR_buttons) do
 						if (_G["Inspect"..button[2] ].Text) then
 							_G["Inspect"..button[2] ].Text:Hide();
 						end
@@ -85,8 +86,11 @@ frame:SetScript("OnEvent",
 		elseif (event == "PLAYER_EQUIPMENT_CHANGED" or event == "GET_ITEM_INFO_RECEIVED") then
 			CharacterPageRearrange_UpdateLabels("Character");
 		elseif (event == "INSPECT_READY") then
-			CharacterPageRearrange_PrepButtons("Inspect");
-			CharacterPageRearrange_UpdateLabels("Inspect");
+			--Check if frame exists
+			if (InspectPaperDollFrame) then
+				CharacterPageRearrange_PrepButtons("Inspect");
+				CharacterPageRearrange_UpdateLabels("Inspect");
+			end
 		end
 		--DEFAULT_CHAT_FRAME:AddMessage(":D");
 	end);
@@ -101,8 +105,8 @@ function CharacterPageRearrange_RearrangeFrame(target)
 	end
 	
 	--Change spacings
-	for i=2, #buttons do
-		_G[target..buttons[i][2]]:SetPoint("TOPLEFT", _G[target..buttons[i-1][2]], "BOTTOMLEFT", 0, -2);
+	for i=2, #CPR_buttons do
+		_G[target..CPR_buttons[i][2]]:SetPoint("TOPLEFT", _G[target..CPR_buttons[i-1][2]], "BOTTOMLEFT", 0, -2);
 	end
 	
 	--Replace textures
@@ -128,7 +132,7 @@ function CharacterPageRearrange_RearrangeFrame(target)
 		end
 	end
 	
-	for i, button in pairs(buttons) do
+	for i, button in pairs(CPR_buttons) do
 		--Buttons are 37x37, but the borders are 64x64
 		_G[target..button[2]]:GetNormalTexture():SetSize(ICON_SIZE * 64/37, ICON_SIZE * 64/37);
 		_G[target..button[2]]:SetSize(ICON_SIZE, ICON_SIZE);
@@ -143,7 +147,7 @@ function CharacterPageRearrange_UpdateLabels(target)
 		unit = "target";
 	end
 	
-	for i, button in pairs(buttons) do
+	for i, button in pairs(CPR_buttons) do
 		--[[if (target == "Inspect") then
 			DEFAULT_CHAT_FRAME:AddMessage(string.gsub(GetInventoryItemLink(unit, button[1]), "|", "||"));
 		end]]--
@@ -178,7 +182,7 @@ function CharacterPageRearrange_RepositionObject(obj, x, y, pt)
 end
 
 function CharacterPageRearrange_PrepButtons(target)
-	for i, button in pairs(buttons) do
+	for i, button in pairs(CPR_buttons) do
 		--Make sure the labels actually exist
 		if (not _G[target..button[2]].Text) then
 			_G[target..button[2]].Text = CreateFrame("Button", _G[target..button[2]]:GetName().."Label", _G[target.."Frame"]);
