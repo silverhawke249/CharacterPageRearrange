@@ -38,15 +38,18 @@ local function CharacterPageRearrange_PageHook(frameName)
 	--CharacterFrame:GetWidth() = 384
     if (frameName == "PaperDollFrame") then
 		CharacterFrame:SetWidth(464);
+        CharacterFrame:SetAttribute("UIPanelLayout-width", 464)
 		for i, button in pairs(CPR_buttons) do
 			_G["Character"..button[2]].Text:Show();
 		end
     else
 		CharacterFrame:SetWidth(384);
+        CharacterFrame:SetAttribute("UIPanelLayout-width", 384)
 		for i, button in pairs(CPR_buttons) do
 			_G["Character"..button[2]].Text:Hide();
 		end
     end
+    UpdateUIPanelPositions(CharacterFrame)
 end
 hooksecurefunc("ToggleCharacter", CharacterPageRearrange_PageHook);
 
@@ -77,8 +80,8 @@ frame:SetScript("OnEvent",
 					InspectFrame:SetWidth(InspectFrame:GetWidth() - 80);
 					CharacterPageRearrange_RepositionObject(CharacterFrame, -80, 0);
 					for i, button in pairs(CPR_buttons) do
-						if (_G["Inspect"..button[2] ].Text) then
-							_G["Inspect"..button[2] ].Text:Hide();
+						if (_G["Inspect"..button[2]].Text) then
+							_G["Inspect"..button[2]].Text:Hide();
 						end
 					end
 				end);
