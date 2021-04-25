@@ -162,8 +162,7 @@ function CharacterPageRearrange_UpdateLabels(target)
         local itemLink = GetInventoryItemLink(unit, button[1]);
         if (_G[target..button[2]].Label) then
             if (itemLink) then
-                local _, _, color, itemString = string.find(itemLink, "|c(%x*)|H([:%a%d]*)|h%[.-%]|h|r");
-                local itemName = select(1, GetItemInfo(itemString));
+                local color, itemString, itemName = string.match(itemLink, "|c(%x*)|H([-:%a%d]*)|h%[(.-)%]|h|r");
                 if (itemName) then
                     local labelText = string.format("|c%s|H%s|h%s|h|r", color, itemString, itemName);
                     _G[target..button[2]].Label:SetText(labelText);
