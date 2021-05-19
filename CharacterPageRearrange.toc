@@ -1,7 +1,7 @@
-## Interface: 32600
+## Interface: 20501
 ## Title: Character Page Rearrange
 ## Author: Silverhawke
 ## Notes: Rearranges character frame to list item names.
-## Version: 1.0.1
+## Version: 1.0.2
 
 CharacterPageRearrange.lua
